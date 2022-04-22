@@ -1,6 +1,6 @@
 const WPSYNC_CONFIG = {
     TEXT: 'Synchronize now',
-    INPROGRESS_TEXT: 'Synchronization in progres...'
+    INPROGRESS_TEXT: 'Synchronization in progress ...'
 }
 
 function disableSyncButton() {
@@ -19,11 +19,10 @@ async function onWordpressSync(event) {
     disableSyncButton();
     
     try {
-	const response = await fetch('./update');
-	const data = await response.json();
+	    const response = await fetch('./update');
+	    const data = await response.json();
     } catch (error) {
-	console.error("Failed to request the update");
-	return;
+	    console.error("Failed to request the update");
     }
 
     enableSyncButton();

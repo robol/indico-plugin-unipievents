@@ -29,7 +29,8 @@ class IndicoWp(IndicoPlugin):
         'enabled': False,
         'wp_url': '',
         'wp_username': '',
-        'wp_application_password': ''
+        'wp_application_password': '',
+        'wp_category_maps': ''
     }
 
     def init(self):
