@@ -9,7 +9,7 @@ class SettingsForm(IndicoForm):
     enabled = BooleanField(_("Enabled"), widget=SwitchWidget())
     wp_url = StringField(_("Wordpress URL"))
     wp_username = StringField(_("Username"))
-    wp_application_password = StringField(_("Application Password"), widget = PasswordInput())
+    wp_application_password = StringField(_("Application Password"))
 
 class EventSettingsForm(IndicoForm):
     enabled = BooleanField(_("Enabled"), widget=SwitchWidget())

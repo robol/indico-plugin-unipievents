@@ -1,10 +1,12 @@
 from wtforms.validators import DataRequired
 
 from indico.core import signals
-from indico.core.plugins import IndicoPlugin, IndicoPluginBlueprint
+from indico.core.plugins import IndicoPlugin, IndicoPluginBlueprint, url_for_plugin
 from indico.modules.events.management.views import WPEventManagement
+from indico.web.menu import SideMenuItem
+from indico.modules.events.layout.util import MenuEntryData
 
-from .controllers import RHWpUpdate, RHWpStatic
+from .controllers import RHWpUpdate, RHWpStatic, RHWpSync
 from .forms import SettingsForm
 from .wordpress import delete_event
 
@@ -38,11 +40,19 @@ class IndicoWp(IndicoPlugin):
         self.connect(signals.event.deleted, self._on_event_deleted)
         self.connect(signals.event.updated, self._on_event_updated)
 
-        self.template_hook('html-head', self.inject_js)
+        # self.template_hook('html-head', self.inject_js)
+        self.connect(signals.menu.items, self._extend_menu, sender = 'event-management-sidemenu')
+
+    def _extend_menu(self, sender, **kwargs):
+        if self.settings.get('enabled'):
+            return SideMenuItem('wp', 'Wordpress sync',
+                                url_for_plugin('wp.sync', event_id = request.view_args['event_id']),
+                                icon = 'transmission')
 
     def inject_js(self, **kwargs):
-        if self.settings.get('enabled') and re.match('^/event/\d+/manage/$', request.path):
-            return "<script src='./wp/js/main.js'></script>"
+        pass
+        #if self.settings.get('enabled') and re.match('^/event/\d+/manage/$', request.path):
+        #    return "<script src='./wp/js/main.js'></script>"
 
     def _on_event_created(self, event, **kwargs):
         if self.settings.get('enabled'):
@@ -66,4 +76,5 @@ class IndicoWp(IndicoPlugin):
 blueprint = IndicoPluginBlueprint('wp', __name__, url_prefix='/event/<int:event_id>/manage/wp')
 
 blueprint.add_url_rule('/update', 'update', view_func = RHWpUpdate)
+blueprint.add_url_rule('/sync', 'sync', view_func = RHWpSync)
 blueprint.add_url_rule('/js/main.js', 'js', view_func = RHWpStatic)

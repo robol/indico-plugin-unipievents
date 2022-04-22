@@ -3,7 +3,7 @@
 # events as custom post types. 
 #
 
-import requests
+import requests, warnings
 
 from flask_pluginengine import current_plugin
 from requests.auth import HTTPBasicAuth
@@ -25,6 +25,7 @@ def post_request(endpoint, data):
                              auth = HTTPBasicAuth(wp_username, wp_password))
 
     if response.status_code >= 300:
+        warnings.warn(response.text)
         raise RuntimeError('Invalid response from the Wordpress API')
 
 def delete_event(event_id):
