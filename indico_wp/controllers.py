@@ -1,9 +1,10 @@
 from flask import jsonify, request, Response
+import os, warnings
+
 from indico.modules.events.management.controllers import RHManageEventBase
+from indico.modules.events.models.events import Event
 
-from flask_pluginengine import current_plugin
-
-import os
+from .wordpress import update_event
 
 with open(os.path.join(
         os.path.dirname(__file__),
@@ -13,7 +14,23 @@ with open(os.path.join(
 class RHWpUpdate(RHManageEventBase):
 
     def _process(self):
-        return jsonify({ "message": "Test", 'api_key': current_plugin.settings.get('wp_api_key') })
+        event_id = request.view_args['event_id']
+        event = Event.get(event_id)
+
+        success = True
+        message = "Event updated successfully"
+
+        try:
+            update_event(event)
+        except:
+            success = False
+            message = "Failure to update the event with ID = %d" % event_id
+            warnings.warn(message)
+                            
+        return jsonify({
+            "success": success,
+            "message": message
+        })
 
 class RHWpStatic(RHManageEventBase):
     

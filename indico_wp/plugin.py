@@ -2,14 +2,13 @@ from wtforms.validators import DataRequired
 
 from indico.core import signals
 from indico.core.plugins import IndicoPlugin, IndicoPluginBlueprint
-
-from .controllers import RHWpUpdate, RHWpStatic
 from indico.modules.events.management.views import WPEventManagement
 
-import os, requests, re
-
+from .controllers import RHWpUpdate, RHWpStatic
 from .forms import SettingsForm
+from .wordpress import delete_event
 
+import os, requests, re, warnings
 from flask import request
 
 class IndicoWp(IndicoPlugin):
@@ -22,13 +21,16 @@ class IndicoWp(IndicoPlugin):
     configurable = True
     settings_form = SettingsForm
 
+    # event_settings_form = EventSettingsForm
+
     default_settings = {
         'enabled': False,
         'wp_url': '',
-        'wp_api_key': ''
+        'wp_username': '',
+        'wp_application_password': ''
     }
 
-    def __init__(self, *args, **kwargs):
+    def init(self):
         super().init()
         
         # Connect to the event modification signals
@@ -44,41 +46,19 @@ class IndicoWp(IndicoPlugin):
 
     def _on_event_created(self, event, **kwargs):
         if self.settings.get('enabled'):
-            print("Created")
-            print(event)
-            print(kwargs)
-            
-            print("Event ID = %d" % event.id)
-            print("Category ID = %d" % event.category_id)
-            print("External URL = %s" % event.external_url)
-            print("Event title = %s" % event.title)
-            print("Event description = %s" % event.description)
-            
-            try:
-                pass
-                # requests.post(self._wp_url, data = { 'a': 'b' })
-            except Exception as e:
-                print("Failed to propagate changes to Wordpress")
-                print(e)
-
+            pass
+        
     def _on_event_deleted(self, event, **kwargs):
         if self.settings.get('enabled'):
-            print("Deleted")
-            print("Event ID = %d" % event.id)
-            print("Category ID = %d" % event.category_id)
-            print("External URL = %s" % event.external_url)
-            print("Event title = %s" % event.title)
-            print("Event description = %s" % event.description)
+            try:
+                delete_event(event.id)
+            except:
+                warnings.warn("Failure to propagate the deletion of event with ID = %d to Wordpress" % event.id)
 
     def _on_event_updated(self, event, **kwargs):
         if self.settings.get('enabled'):
-            print("Updated")
-            print("Event ID = %d" % event.id)
-            print("Category ID = %d" % event.category_id)
-            print("External URL = %s" % event.external_url)
-            print("Event title = %s" % event.title)
-            print("Event description = %s" % event.description)
-
+            pass
+        
     def get_blueprints(self):
         return blueprint        
     
