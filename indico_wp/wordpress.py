@@ -3,8 +3,9 @@
 # events as custom post types. 
 #
 
-import requests, warnings
+import requests, warnings, datetime
 
+from zoneinfo import ZoneInfo
 from flask_pluginengine import current_plugin
 from requests.auth import HTTPBasicAuth
 
@@ -111,13 +112,20 @@ def update_event(event):
         # the wordpress event
         taxonomies = set(taxonomies + wp_event['unipievents_taxonomy'])
 
+    zone = ZoneInfo(current_plugin.settings.get('wp_timezone'))
+
+    # Indico stores times as UTC, whereas the Unipi events plugin expects
+    # them in a local time zone. 
+    start_timestamp = (event.start_dt + zone.utcoffset(event.start_dt)).timestamp()
+    end_timestamp = (event.end_dt + zone.utcoffset(event.start_dt)).timestamp()
+
     event_data = {
         'status': 'publish',
         'title': post_title,
         'content': description,
         'unipievents_taxonomy': ",".join(map(str, taxonomies)),
-        'unipievents_startdate': int(event.start_dt.timestamp()),
-        'unipievents_enddate': int(event.end_dt.timestamp()),
+        'unipievents_startdate': int(start_timestamp),
+        'unipievents_enddate': int(end_timestamp),
         'unipievents_place': venue,
         'unipievents_externalid': event.id
     }

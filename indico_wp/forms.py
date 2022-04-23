@@ -20,6 +20,7 @@ class SettingsForm(IndicoForm):
     wp_category_maps = StringField(_("Category maps"), 
         description = category_description
     )
+    wp_timezone = StringField(_("Wordpress timezone"), description = _("Example: Europe/Rome"))
 
 class EventSettingsForm(IndicoForm):
     enabled = BooleanField(_("Enabled"), widget=SwitchWidget())
