@@ -66,26 +66,45 @@ def get_categories(event):
             taxonomies.append(value)
     return taxonomies
 
-def update_event(event):
-    #FIXME: We need to update this function to post custom post
-    # types of type 'event', and to check if an event with the
-    # appropriate meta key 'indico_id' exists; if that's the
-    # case, we just update the post.
+def get_speakers(event):
+    speakers = []
+    for sp in event.person_links:
+        speaker_description = ""
+        speaker_description = speaker_description + sp.full_name
+        if sp.affiliation:
+            speaker_description = speaker_description + " (%s)" % sp.affiliation
+        speakers.append(speaker_description)
 
-    wp_event = get_event(event.id)
+    return speakers
 
-    post_title = event.title
-
-    if event.type == 'lecture':
-        description = str(event.description)
-    else:
-        description = ""
-    description += "<p>Further information is available at the <a href=\"%s\">event page</a> on the Indico platform</p>"  % event.external_url
-
+def get_venue(event):
     venue = event.venue_name
     if event.venue_name != "" and event.room_name != "":
         venue = venue + ", "
     venue = venue + event.room_name
+
+    return venue
+
+
+def update_event(event):
+    wp_event = get_event(event.id)
+
+    post_title = event.title
+    venue = get_venue(event)
+
+    description = ""
+    if event.type == 'lecture':
+        speakers = get_speakers(event)
+        if len(speakers) > 0:
+            speaker_names = ",".join(speakers)
+            post_title = post_title + " - %s" % speaker_names
+        if venue != "":
+            if venue[-1] != ".":
+                venue = venue + "."
+            description = description + "<h4>Venue</h4><p>" + venue + "</p>"
+        description = description + "<h4 class='mt-4'>Abstract</h4>" + str(event.description)
+
+    description += "<p class='mt-4'>Further information is available at the <a href=\"%s\">event page</a> on the Indico platform.</p>"  % event.external_url
 
     taxonomies = get_categories(event)
 
@@ -102,7 +121,7 @@ def update_event(event):
         'unipievents_taxonomy': ",".join(map(str, taxonomies)),
         'unipievents_startdate': int(event.start_dt.timestamp()),
         'unipievents_enddate': int(event.end_dt.timestamp()),
-        'unipievents_place': event.venue_name,
+        'unipievents_place': venue,
         'unipievents_externalid': event.id
     }
 
