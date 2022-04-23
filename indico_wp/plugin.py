@@ -18,7 +18,7 @@ class IndicoWp(IndicoPlugin):
 
     This plugin synchronizes the changes in Indico events to an
     external Wordpress instance, creating posts with a custom 
-    post type 'events'. """
+    post type 'unipievent'. """
 
     configurable = True
     settings_form = SettingsForm

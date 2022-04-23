@@ -39,10 +39,7 @@ def make_request(method, endpoint, data = {}):
     return response
 
 def delete_event(event_id):
-    #FIXME: We need support for the indico_id meta and custom
-    # event post type to implement this, see update_event(). 
     wp_event = get_event(event_id)
-
     if wp_event is not None:
         make_request('delete', '/wp-json/wp/v2/unipievents/%d' % wp_event['id'])
 
