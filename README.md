@@ -21,3 +21,18 @@ PLUGINS={ 'wp' }
 ```
 to your ```indico.conf```, or just add ```'wp'``` to the list of loaded
 plugins in case you already have other plugins loaded. 
+
+## Development
+
+You can start the development environment by adjusting the configuration
+in the ```indico.env.sample``` file and renaming it ```indico.env```. Then,
+you can start the containers by
+```
+sudo docker-compose up
+```
+and connect to [http://localhost:9090](http://localhost:9090). Configure your 
+first user account. To update the plugin version in the container, run
+```
+sudo docker-compose exec -u root web bash -c "cd /indico-wp && python3 setup.py install && touch /indico/indico.wsgi"
+```
+that will rebuild the plugin and restart the WSGI server.  
