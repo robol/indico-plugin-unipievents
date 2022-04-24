@@ -1,6 +1,6 @@
-# Indico WP
+# Indico Plugin UnipiEvents
 
-Indico WP is an Indico plugin that synchronizes events to a Wordpress 
+This is an Indico plugin that synchronizes events to a Wordpress 
 instance running the Unipi Events plugin; it is currently in use at the
 Department of Mathematics of the University of Pisa. 
 
@@ -17,9 +17,9 @@ indico setup list-plugins
 ```
 To enable the plugin, insert the line 
 ```
-PLUGINS={ 'wp' }
+PLUGINS={ 'unipievents' }
 ```
-to your ```indico.conf```, or just add ```'wp'``` to the list of loaded
+to your ```indico.conf```, or just add ```'unipievents'``` to the list of loaded
 plugins in case you already have other plugins loaded. 
 
 ## Development
