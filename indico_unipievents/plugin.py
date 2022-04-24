@@ -13,12 +13,12 @@ from .wordpress import delete_event
 import os, requests, re, warnings
 from flask import request
 
-class IndicoWp(IndicoPlugin):
-    """Indico Wordpress interface
+class IndicoUnipiEvents(IndicoPlugin):
+    """UnipiEvents
 
     This plugin synchronizes the changes in Indico events to an
-    external Wordpress instance, creating posts with a custom 
-    post type 'unipievent'. """
+    external Wordpress instance with the UnipiEvents plugin, creating
+    posts with a custom post type 'unipievent'. """
 
     configurable = True
     settings_form = SettingsForm
@@ -47,8 +47,8 @@ class IndicoWp(IndicoPlugin):
 
     def _extend_menu(self, sender, **kwargs):
         if self.settings.get('enabled'):
-            return SideMenuItem('wp', 'Wordpress sync',
-                                url_for_plugin('wp.sync', event_id = request.view_args['event_id']),
+            return SideMenuItem('unipievents', 'Wordpress sync',
+                                url_for_plugin('unipievents.sync', event_id = request.view_args['event_id']),
                                 icon = 'transmission')
 
     def inject_js(self, **kwargs):
@@ -75,7 +75,7 @@ class IndicoWp(IndicoPlugin):
         return blueprint        
     
 
-blueprint = IndicoPluginBlueprint('wp', __name__, url_prefix='/event/<int:event_id>/manage/wp')
+blueprint = IndicoPluginBlueprint('unipievents', __name__, url_prefix='/event/<int:event_id>/manage/unipievents')
 
 blueprint.add_url_rule('/update', 'update', view_func = RHWpUpdate)
 blueprint.add_url_rule('/sync', 'sync', view_func = RHWpSync)

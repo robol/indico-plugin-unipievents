@@ -11,7 +11,7 @@ services:
     volumes:
       - './archive:/indico/archive'
       - './custom:/custom'
-      - '.:/indico-wp'
+      - '.:/indico-unipievents'
 
   postgres:
     image: postgres:14
