@@ -9,7 +9,7 @@ Department of Mathematics of the University of Pisa.
 You may install the plugin by cloning the repository on the Indico server
 and then running:
 ```
-python3 setup.py install
+pip install indico-plugin-unipievents
 ```
 Check that the plugin is installed by running
 ```
