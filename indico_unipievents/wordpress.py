@@ -3,7 +3,8 @@
 # events as custom post types. 
 #
 
-import requests, warnings, datetime
+import requests, warnings
+import jinja2.filters
 
 from zoneinfo import ZoneInfo
 from flask_pluginengine import current_plugin
@@ -91,6 +92,7 @@ def update_event(event):
     venue = get_venue(event)
 
     description = ""
+    excerpt = ""
     if event.type == 'lecture':
         speakers = get_speakers(event)
         if len(speakers) > 0:
@@ -99,8 +101,9 @@ def update_event(event):
         if venue != "":
             if venue[-1] != ".":
                 venue = venue + "."
-            description = description + "<h4>Venue:</h4><p>" + venue + "</p>"
-        description = description + "<h4 class='mt-4'>Abstract:</h4>" + str(event.description)
+            description = description + "<h4>Venue</h4><p>" + venue + "</p>"
+        excerpt = excerpt + str(event.description)
+        description = description + "<h4 class='mt-4'>Abstract</h4>" + str(event.description)
 
     description += "<p class='mt-4'>Further information is available at the <a href=\"%s\">event page</a> on the Indico platform.</p>"  % event.external_url
 
@@ -119,10 +122,15 @@ def update_event(event):
     start_timestamp = (event.start_dt + zone.utcoffset(event.start_dt)).timestamp()
     end_timestamp = (event.end_dt + zone.utcoffset(event.start_dt)).timestamp()
 
+    # We make sure that the excerpt is pure text, and truncate it to $250$ characters. 
+    excerpt = jinja2.filters.do_striptags(excerpt)
+    excerpt = jinja2.filters.do_truncate({}, excerpt, length = 250, end = '...', leeway = 10)
+
     event_data = {
         'status': 'publish',
         'title': post_title,
         'content': description,
+        'excerpt': excerpt,
         'unipievents_taxonomy': ",".join(map(str, taxonomies)),
         'unipievents_startdate': int(start_timestamp),
         'unipievents_enddate': int(end_timestamp),
