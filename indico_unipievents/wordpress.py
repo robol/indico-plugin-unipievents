@@ -105,7 +105,7 @@ def update_event(event):
         excerpt = excerpt + str(event.description)
         description = description + "<h4 class='mt-4'>Abstract</h4>" + str(event.description)
 
-    description += "<p class='mt-4'>Further information is available at the <a href=\"%s\">event page</a> on the Indico platform.</p>"  % event.external_url
+    description += "<p class='mt-4'>Further information is available on the <a href=\"%s\">event page</a> on the Indico platform.</p>"  % event.external_url
 
     taxonomies = get_categories(event)
 
