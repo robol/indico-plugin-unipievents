@@ -91,6 +91,10 @@ def update_event(event):
     post_title = event.title
     venue = get_venue(event)
 
+    event_description = str(event.description)
+    if event_description == "":
+        event_description = "<p>TBA</p>"
+
     description = ""
     excerpt = ""
     if event.type == 'lecture':
@@ -102,8 +106,8 @@ def update_event(event):
             if venue[-1] != ".":
                 venue = venue + "."
             description = description + "<h4>Venue</h4><p>" + venue + "</p>"
-        excerpt = excerpt + str(event.description)
-        description = description + "<h4 class='mt-4'>Abstract</h4>" + str(event.description)
+        excerpt = excerpt + event_description
+        description = description + "<h4 class='mt-4'>Abstract</h4>" + event_description
 
     description += "<p class='mt-4'>Further information is available on the <a href=\"%s\">event page</a> on the Indico platform.</p>"  % event.external_url
 
@@ -124,7 +128,7 @@ def update_event(event):
 
     # We make sure that the excerpt is pure text, and truncate it to $250$ characters. 
     excerpt = jinja2.filters.do_striptags(excerpt)
-    excerpt = jinja2.filters.do_truncate({}, excerpt, length = 250, end = '...', leeway = 10)
+    excerpt = jinja2.filters.do_truncate({}, excerpt, length = 250, end = '', leeway = 10)
 
     event_data = {
         'status': 'publish',
