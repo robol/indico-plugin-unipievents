@@ -33,6 +33,6 @@ sudo docker-compose up
 and connect to [http://localhost:9090](http://localhost:9090). Configure your 
 first user account. To update the plugin version in the container, run
 ```
-sudo docker-compose exec -u root web bash -c "pip3 uninstall indico-plugin-events ; cd /indico-unipievents && python3 setup.py install && touch /indico/indico.wsgi"
+sudo docker-compose exec -u root web bash -c "pip3 uninstall indico-plugin-unipievents ; cd /indico-unipievents && python3 setup.py install && touch /indico/indico.wsgi"
 ```
 that will rebuild the plugin and restart the WSGI server.  
